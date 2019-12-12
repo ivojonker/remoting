@@ -44,6 +44,7 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.Proxy.Type;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -347,7 +348,9 @@ public class JnlpAgentEndpointResolver extends JnlpEndpointResolver {
         Socket s = null;
 
         try {
-            s = new Socket();
+        	InetSocketAddress proxyToUse = getResolvedHttpProxyAddress(hostname,port);
+        	System.out.println(String.format(" proxy to use:", proxyToUse));
+            s = proxyToUse == null ? new Socket() : new Socket(new Proxy(Type.HTTP, proxyToUse)); 
             s.setReuseAddress(true);
             SocketAddress sa = new InetSocketAddress(hostname, port);
             s.connect(sa, timeout);
